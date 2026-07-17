@@ -4,6 +4,14 @@
 const char* ssid = "Tinto";
 const char* pass = "Csw$2023";
 
+const char* mqtt_broker = "test.mosquitto.org";
+const char* mqtt_port = "1883";
+const char* mqtt_topic = "sp/26/2015";
+const char* mqtt_client = "3232";
+
+WiFiClient espClient;
+PubSubClient vehiculo(espClient);
+
 void setup() 
 {
   Serial.begin(115200);
@@ -16,6 +24,7 @@ void setup()
     delay(500);
   }
 
+  vehiculo.setServer(mqtt_broker, mqtt_port);
 }
 
 void loop() 
