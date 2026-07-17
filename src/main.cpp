@@ -1,42 +1,32 @@
 #include <Arduino.h>
-#include "Mate.h"
+#include <WiFi.h>
 
-Mate lista1;
-Mate lista2;
-Mate lista3;
+const char* ssid = "Tinto";
+const char* pass = "Csw$2023";
 
 void setup() 
 {
   Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, pass);
 
-  // Inicializamos la semilla del random con una lectura analógica al aire
-  randomSeed(analogRead(0)); 
+  while(WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print(".");
+    delay(500);
+  }
 
-  lista1.agregar();
-  lista1.agregar();
-
-  lista2.agregar();
-  lista2.agregar();  
-  lista2.agregar();
 }
 
 void loop() 
 {
-  Serial.print("Lista 1 - Cantidad: ");
-  Serial.println(lista1.contar());
-  Serial.print("Lista 1 - Suma: ");
-  Serial.println(lista1.sumar());
-  Serial.print("Lista 1 - Promedio: ");
-  Serial.println(lista1.promediar());
-  Serial.println("--------------------");
- 
-  Serial.print("Lista 2 - Cantidad: ");
-  Serial.println(lista2.contar());
-  Serial.print("Lista 2 - Suma: ");
-  Serial.println(lista2.sumar());
-  Serial.print("Lista 2 - Promedio: ");
-  Serial.println(lista2.promediar());
-  Serial.println("====================");
+  /*int n = WiFi.scanNetworks();
+  for(int i=0; i<n;i++)
+  {
+    Serial.println(WiFi.SSID(i));
+    delay(2500);
+  }*/
 
-  delay(5000); // 5 segundos para que no sature el monitor serie
+  Serial.println(WiFi.localIP());
+  delay(1000);
 }
