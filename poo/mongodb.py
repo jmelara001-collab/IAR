@@ -3,7 +3,7 @@ from datetime import datetime
  
 # 1. DIRECCIÓN DE CONEXIÓN
 # Si MongoDB está en tu propia computadora:
-MONGO_URI = "mongodb+srv://idUser:pass001#@cluster0.tjcodey.mongodb.net/?appName=Cluster0"
+MONGO_URI = "mongodb+srv://jmelara001_db_user:CCGONiScDAabA5PQ@cluster0.tbuixyl.mongodb.net/?appName=Cluster0"
  
 # Si usas MongoDB Atlas (en la nube), tu URI se ve así:
 # MONGO_URI = "mongodb+srv://usuario:password@cluster.mongodb.net/"
@@ -18,13 +18,13 @@ try:
     print("¡Conexión exitosa a MongoDB!")
  
     # 3. SELECCIONAR LA BASE DE DATOS Y LA COLECCIÓN
-    db = cliente["iot_database"]            # Si no existe, MongoDB la crea sola
-    coleccion = db["lecturas_sensores"]     # Equivalente a la "tabla"
+    db = cliente["Pruebadb"]            # Si no existe, MongoDB la crea sola
+    coleccion = db["Prueba"]     # Equivalente a la "tabla"
  
     # 4. INSERTAR UN DOCUMENTO (Escribir datos)
     # Los datos se mandan como un Diccionario de Python (Formato JSON)
     nuevo_dato = {
-        "dispositivo_id": "ESP8266_Sensor_1",
+        "dispositivo_id": "ESP32_Sensor_1",
         "temperatura": 24.5,
         "humedad": 60,
         "fecha": datetime.now()
