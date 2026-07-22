@@ -1,0 +1,64 @@
+import json
+from datetime import datetime
+import paho.mqtt.client as mqtt
+import pymongo
+ 
+# ---------------------------------------------------------
+# 1. CONFIGURACIÓN DE MONGODB
+# ---------------------------------------------------------
+MONGO_URI = "mongodb+srv://jmelara001_db_user:CCGONiScDAabA5PQ@cluster0.tbuixyl.mongodb.net/?appName=Cluster0"
+mongo_client = pymongo.MongoClient(MONGO_URI)
+db = mongo_client["iot_database"]
+coleccion = db["lecturas_sensores"]
+ 
+# ---------------------------------------------------------
+# 2. FUNCIONES DE EVENTOS MQTT
+# ---------------------------------------------------------
+ 
+# Se ejecuta automáticamente cuando te conectas al broker MQTT
+def on_connect(client, userdata, flags, rc, properties=None):
+    if rc == 0:
+        print("¡Conectado con éxito al Broker MQTT!")
+        # Nos suscribimos al canal/topic de tu ESP8266
+        client.subscribe("sp/26/2015")
+        print("Suscripto al topic: esp8266/clase")
+    else:
+        print(f"Falló la conexión al broker. Código: {rc}")
+ 
+# ¡AQUÍ SUCEDE LA MAGIA! Se ejecuta cada vez que llega un mensaje del ESP8266
+def on_message(client, userdata, msg):
+    try:
+        # Convertimos los bytes recibidos a texto
+        payload_texto = msg.payload.decode("utf-8")
+        print(f"\nMensaje recibido en [{msg.topic}]: {payload_texto}")
+ 
+        # Preparamos el documento para MongoDB
+        documento = {
+            "topic": msg.topic,
+            "valor": payload_texto,  # El dato que envió el itoa/ESP8266
+            "fecha": datetime.now()
+        }
+ 
+        # Guardamos en la base de datos
+        resultado = coleccion.insert_one(documento)
+        print(f"Guardado en MongoDB con ID: {resultado.inserted_id}")
+ 
+    except Exception as e:
+        print(f"Error al procesar o guardar el mensaje: {e}")
+ 
+# ---------------------------------------------------------
+# 3. INICIALIZACIÓN Y BUCLE PRINCIPAL
+# ---------------------------------------------------------
+# Creamos el cliente MQTT (versión v2 de la librería)
+mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+ 
+# Asignamos las funciones
+mqtt_client.on_connect = on_connect
+mqtt_client.on_message = on_message
+ 
+# Conectamos al broker público (mismo que usas en el ESP8266)
+print("Conectando al broker MQTT...")
+mqtt_client.connect("test.mosquitto.org", 1883, 60)
+ 
+# Inicia el bucle infinito para escuchar mensajes sin bloquear
+mqtt_client.loop_forever()
